@@ -29,7 +29,14 @@
   --map-grid: #ebeae3;
   --map-land: #fdfdfb;
 
-  --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  /*
+   * Sen, with the system stack behind it. Sen ships no `tnum` feature, but it
+   * does not need one: all ten of its digits already carry the same advance
+   * width, so the counter stays put as it climbs. The .tabular class is kept
+   * anyway — it is what holds the columns steady if Sen fails to load and a
+   * proportional system face takes over.
+   */
+  --font: 'Sen', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   color-scheme: light;

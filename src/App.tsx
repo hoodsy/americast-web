@@ -149,21 +149,20 @@ export default function App() {
           <div className="bar__tools">
             <GithubLink />
             <ThemeToggle mode={mode} onToggle={toggleTheme} />
-          </div>
-        </nav>
-
-        {/* What is being shown and when, then the control that moves it —
-            all above the map it drives. The picker sits outside the ready
-            gate so a slow run can still be swapped away from. */}
-        <section className="deck">
-          <div className="deck__head">
-            <h2 className="deck__title">{hours ? `${hours} hour forecast` : 'Forecast'}</h2>
             <RunPicker
               runs={runs}
               runTime={data?.totals.run_time ?? runs[0] ?? ''}
               isLatest={runKey === 'latest'}
               onSelect={selectRun}
             />
+          </div>
+        </nav>
+
+        {/* What is being shown and when, then the control that moves it —
+            all above the map it drives. */}
+        <section className="deck">
+          <div className="deck__head">
+            <h2 className="deck__title">{hours ? `${hours} hour forecast` : 'Forecast'}</h2>
           </div>
 
           {ready ? (

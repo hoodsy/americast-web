@@ -12,6 +12,8 @@
   gap: 6px;
 }
 
+/* Height matched to the icon squares beside it — the nav's right edge is one
+   row of controls and they have to sit on the same line. */
 .runpick input[type='date'],
 .runpick select {
   font: inherit;
@@ -21,7 +23,8 @@
   background: var(--surface-raised);
   border: 1px solid var(--grid);
   border-radius: 5px;
-  padding: 3px 7px;
+  height: 28px;
+  padding: 0 7px;
   cursor: pointer;
 }
 
