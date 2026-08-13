@@ -28,11 +28,12 @@ export function Readout({ mw, validTime, runTime }: Props) {
         <div className="readout__caption muted">Statewide solar output</div>
       </div>
 
+      {/* Same shape as the block opposite: one figure carrying the weight,
+          with its smaller qualifiers stacked around it. The date goes above
+          rather than beside the clock so the hour reads as the headline. */}
       <div className="readout__block readout__block--when">
-        <div className="readout__when tabular">
-          <span className="readout__clock">{formatPacificTime(validTime)}</span>
-          <span className="readout__date">{formatPacificDate(validTime)}</span>
-        </div>
+        <div className="readout__date muted tabular">{formatPacificDate(validTime)}</div>
+        <div className="readout__when tabular">{formatPacificTime(validTime)}</div>
         <div className="readout__caption muted tabular">
           Pacific · {formatLead(runTime, validTime)} ahead
         </div>

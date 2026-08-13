@@ -306,6 +306,18 @@ export function PlantMap({ plants, series, validTimes, pos, cursor, mode }: Prop
         dragRotate={false}
         touchPitch={false}
         maxPitch={0}
+        /*
+         * The map is the whole first screen now, which puts it under every
+         * scroll gesture the reader makes on their way to the curve below. Left
+         * alone, one wheel both scrolls the page and zooms the map, and on a
+         * phone a one-finger drag pans the map instead of moving the page at
+         * all — there would be no way past the fold.
+         *
+         * Cooperative gestures give the plain wheel and the one-finger drag
+         * back to the page: ctrl/cmd+wheel zooms, two fingers pan, and the map
+         * says so when you try.
+         */
+        cooperativeGestures
         interactiveLayerIds={['plants']}
         onLoad={(e) => {
           setMap(e.target);
