@@ -355,6 +355,9 @@ export function PlantMap({ plants, series, validTimes, pos, cursor, mode }: Prop
           <div className="map__tooltip-name">{tooltip.name}</div>
           <div className="map__tooltip-meta muted">{tooltip.meta}</div>
           <div className="map__tooltip-value tabular">{tooltip.value}</div>
+          {tooltip.clear && (
+            <div className="map__tooltip-meta muted tabular">{tooltip.clear}</div>
+          )}
           <div className="map__tooltip-meta muted tabular">{tooltip.when}</div>
         </div>
       )}
@@ -371,18 +374,24 @@ function buildTooltip(
   cursor: number,
   validTimes: string[],
 ) {
-  const mw = s?.mw[cursor];
+  const mw = s?.mw[cursor] ?? 0;
   const clearness = s?.clearness[cursor] ?? null;
+  const cap = plant.capacity_mw_ac;
 
   return {
     name: plant.name,
-    meta: `${plant.county} County · ${plant.capacity_mw_ac.toFixed(1)} MW capacity`,
-    // The exact clearness reaches the reader as text here, which is what
-    // makes the low end of the ramp acceptable at its contrast.
+    // Capacity moved into the output line, where it is the denominator.
+    meta: `${plant.county} County`,
     value:
       clearness === null
         ? 'Not generating — no meaningful sun'
-        : `${(mw ?? 0).toFixed(1)} MW · ${(clearness * 100).toFixed(0)}% of clear sky`,
+        : `${mw.toFixed(1)} MW / ${cap.toFixed(1)} MW · ${
+            cap > 0 ? `${((mw / cap) * 100).toFixed(0)}%` : '—'
+          } of capacity`,
+    // The exact clearness still reaches the reader as text, which is what
+    // makes the low end of the ramp acceptable at its contrast — the circle's
+    // colour is this number, not the share of capacity above it.
+    clear: clearness === null ? '' : `${(clearness * 100).toFixed(0)}% of clear sky`,
     when: validTimes[cursor] ? formatPacific(validTimes[cursor]) : '',
   };
 }
