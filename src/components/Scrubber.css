@@ -37,7 +37,7 @@
   position: relative;
   flex: 1 1 auto;
   min-width: 0;
-  height: 40px;
+  height: 62px;
 }
 
 /* Drawn layer: everything the reader sees. Never takes the pointer — the
@@ -48,12 +48,51 @@
   pointer-events: none;
 }
 
-/* Ruler geometry: the line runs across the top of the track and the hour
-   marks hang below it, so progress never paints over the marks. */
+/* The day's shape, sat on top of the hours it describes. Inset to match the
+   ticks so a peak lands over its own mark; stretched horizontally, which is
+   why the outline needs a non-scaling stroke. */
+.scrub__spark {
+  position: absolute;
+  top: 0;
+  left: 7px;
+  /* Width stated outright: an SVG is a replaced element, so `auto` between
+     left and right resolves to its intrinsic viewBox width rather than
+     filling the track. */
+  width: calc(100% - 14px);
+  height: 28px;
+  overflow: visible;
+}
+
+.scrub__spark-ceiling {
+  fill: var(--ceiling);
+  opacity: 0.5;
+}
+
+/* Ahead of the playhead the forecast is drawn faintly; behind it, filled. */
+.scrub__spark-ahead {
+  fill: var(--curve);
+  opacity: 0.16;
+}
+
+.scrub__spark-done {
+  fill: var(--curve);
+  opacity: 0.5;
+}
+
+.scrub__spark-edge {
+  fill: none;
+  stroke: var(--curve);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+/* Ruler geometry: the line runs under the sparkline and the hour marks hang
+   below it, so progress never paints over the marks. */
 .scrub__base,
 .scrub__fill {
   position: absolute;
-  top: 8px;
+  top: 30px;
   height: 2px;
   border-radius: 1px;
 }
@@ -71,7 +110,7 @@
    without a single label. */
 .scrub__tick {
   position: absolute;
-  top: 13px;
+  top: 35px;
   width: 1px;
   background: var(--muted);
   transform: translateX(-50%);
@@ -96,7 +135,7 @@
    shuffle sideways by a pixel as the hours change width. */
 .scrub__hour {
   position: absolute;
-  top: 26px;
+  top: 48px;
   font-size: 10px;
   line-height: 1;
   white-space: nowrap;
@@ -112,7 +151,7 @@
 
 .scrub__handle {
   position: absolute;
-  top: 9px;
+  top: 31px;
   width: 13px;
   height: 13px;
   border-radius: 50%;

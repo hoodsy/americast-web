@@ -175,6 +175,8 @@ export default function App() {
               <Scrubber
                 validTimes={data.totals.valid_times}
                 runTime={data.totals.run_time}
+                mw={stateLevel.mw}
+                clearMw={stateLevel.clear_mw}
                 pos={pos}
                 cursor={cursor}
                 playing={playing}

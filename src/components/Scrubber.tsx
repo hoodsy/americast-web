@@ -1,4 +1,6 @@
 import { useMemo, type ReactNode } from 'react';
+import { area, line, curveMonotoneX } from 'd3-shape';
+import { scaleLinear } from 'd3-scale';
 import {
   formatLead,
   formatPacific,
@@ -20,9 +22,15 @@ function at(frac: number): string {
   return `calc(${HALF_THUMB}px + (100% - ${HALF_THUMB * 2}px) * ${frac})`;
 }
 
+/** Height of the sparkline band, in the units its viewBox is drawn in. */
+const SPARK_H = 28;
+
 interface Props {
   validTimes: string[];
   runTime: string;
+  /** Statewide megawatts and its clear-sky ceiling — the curve, in miniature. */
+  mw: number[];
+  clearMw: number[];
   /** Fractional hour, so the fill and handle glide rather than step. */
   pos: number;
   cursor: number;
@@ -38,9 +46,49 @@ interface Props {
  * underneath, which is the only way to get hourly ticks and a handle that
  * follows the fractional playhead rather than snapping between hours.
  */
-export function Scrubber({ validTimes, runTime, pos, cursor, playing, onSeek, onToggle }: Props) {
+export function Scrubber({
+  validTimes,
+  runTime,
+  mw,
+  clearMw,
+  pos,
+  cursor,
+  playing,
+  onSeek,
+  onToggle,
+}: Props) {
   const last = Math.max(validTimes.length - 1, 1);
   const validTime = validTimes[cursor];
+
+  /**
+   * The day's shape, drawn over the hours it belongs to. Same series and same
+   * curve as the chart below the fold, so the reader is looking at a miniature
+   * of it rather than a second, differently-shaped claim — but with no axes and
+   * no numbers, because at twenty pixels tall the only readable thing is the
+   * shape.
+   *
+   * Drawn in hour units and stretched to the track: x is the hour index, so
+   * every peak sits exactly over its own tick whatever the deck's width.
+   */
+  const spark = useMemo(() => {
+    const peak = Math.max(...clearMw, ...mw, 1);
+    const y = scaleLinear().domain([0, peak]).range([SPARK_H, 0]);
+    const toArea = area<number>()
+      .x((_, i) => i)
+      .y0(SPARK_H)
+      .y1((d) => y(d))
+      .curve(curveMonotoneX);
+    const toLine = line<number>()
+      .x((_, i) => i)
+      .y((d) => y(d))
+      .curve(curveMonotoneX);
+
+    return {
+      ceiling: toArea(clearMw) ?? '',
+      forecast: toArea(mw) ?? '',
+      edge: toLine(mw) ?? '',
+    };
+  }, [mw, clearMw]);
 
   /**
    * The marks never move, so they are built as elements once and held. The
@@ -106,6 +154,23 @@ export function Scrubber({ validTimes, runTime, pos, cursor, playing, onSeek, on
 
       <div className="scrub__track">
         <div className="scrub__ticks" aria-hidden="true">
+          <svg
+            className="scrub__spark"
+            viewBox={`0 0 ${last} ${SPARK_H}`}
+            preserveAspectRatio="none"
+          >
+            <defs>
+              {/* Everything left of the playhead reads as covered ground. */}
+              <clipPath id="scrub-played">
+                <rect x="0" y="0" width={played * last} height={SPARK_H} />
+              </clipPath>
+            </defs>
+            <path d={spark.ceiling} className="scrub__spark-ceiling" />
+            <path d={spark.forecast} className="scrub__spark-ahead" />
+            <path d={spark.forecast} className="scrub__spark-done" clipPath="url(#scrub-played)" />
+            <path d={spark.edge} className="scrub__spark-edge" vectorEffect="non-scaling-stroke" />
+          </svg>
+
           <span
             className="scrub__base"
             style={{ left: `${HALF_THUMB}px`, right: `${HALF_THUMB}px` }}
