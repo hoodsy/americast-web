@@ -385,13 +385,14 @@ function buildTooltip(
     value:
       clearness === null
         ? 'Not generating — no meaningful sun'
-        : `${mw.toFixed(1)} MW / ${cap.toFixed(1)} MW · ${
-            cap > 0 ? `${((mw / cap) * 100).toFixed(0)}%` : '—'
-          } of capacity`,
-    // The exact clearness still reaches the reader as text, which is what
-    // makes the low end of the ramp acceptable at its contrast — the circle's
-    // colour is this number, not the share of capacity above it.
-    clear: clearness === null ? '' : `${(clearness * 100).toFixed(0)}% of clear sky`,
+        : `${mw.toFixed(1)} MW / ${cap.toFixed(1)} MW capacity`,
+    // Not a second way of saying the line above. That one is output against
+    // nameplate, which folds in the time of day; this is output against what
+    // a cloudless sky would give *at this hour*, which is weather alone — a
+    // plant at dusk can sit at 100% of clear sky and 10% of nameplate. It is
+    // also the number the circle's colour encodes, and reaching it as text is
+    // what makes the low end of the ramp acceptable at its contrast.
+    clear: clearness === null ? '' : `${(clearness * 100).toFixed(0)}% of clear-sky output`,
     when: validTimes[cursor] ? formatPacific(validTimes[cursor]) : '',
   };
 }
