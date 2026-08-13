@@ -1,0 +1,126 @@
+.hero {
+  padding: 20px 24px 8px;
+}
+
+.hero__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.hero__title {
+  font-size: 19px;
+}
+
+.hero__sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+}
+
+/* The statewide figure used to live here. It now sits on the scrubber, where
+   the control that changes it is — see Readout. The run picker took its place:
+   the run is what the whole chart is of, so it belongs at the chart's head. */
+.hero__controls {
+  margin-left: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hero__chart {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.hero__grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.hero__grid--day {
+  stroke-dasharray: 2 3;
+}
+
+.hero__axis {
+  fill: var(--muted);
+  font-size: 11px;
+}
+
+.hero__ceiling {
+  fill: var(--ceiling);
+  opacity: 0.55;
+}
+
+.hero__forecast {
+  fill: var(--curve);
+  opacity: 0.22;
+}
+
+.hero__forecast-line {
+  fill: none;
+  stroke: var(--curve);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.hero__cursor {
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.hero__cursor-dot {
+  fill: var(--curve);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+}
+
+.hero__cursor-ceiling {
+  fill: var(--muted);
+}
+
+.hero__legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  margin: 2px 0 0;
+}
+
+.key {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.key--forecast {
+  background: var(--curve);
+  opacity: 0.6;
+}
+
+.key--ceiling {
+  background: var(--ceiling);
+}
+
+.key:not(:first-child) {
+  margin-left: 10px;
+}
+
+.hero__cost {
+  margin-left: auto;
+}
+
+@media (max-width: 620px) {
+  .hero {
+    padding: 16px 16px 8px;
+  }
+
+  .hero__cost {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

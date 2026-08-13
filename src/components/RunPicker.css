@@ -1,0 +1,68 @@
+.runpick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+}
+
+.runpick__field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.runpick input[type='date'],
+.runpick select {
+  font: inherit;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: var(--surface-raised);
+  border: 1px solid var(--grid);
+  border-radius: 5px;
+  padding: 3px 7px;
+  cursor: pointer;
+}
+
+.runpick input[type='date']:hover,
+.runpick select:hover {
+  border-color: var(--muted);
+}
+
+.runpick input[type='date']:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* The picker's own calendar glyph follows the theme rather than staying dark
+   on a dark surface. */
+:root[data-theme='dark'] .runpick input[type='date']::-webkit-calendar-picker-indicator,
+:root:not([data-theme='light']) .runpick input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.7);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .runpick input[type='date']::-webkit-calendar-picker-indicator {
+    filter: none;
+  }
+}
+
+.runpick__latest {
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--surface-raised);
+  border: 1px solid var(--grid);
+  border-radius: 5px;
+  padding: 3px 9px;
+  cursor: pointer;
+}
+
+.runpick__latest:hover {
+  border-color: var(--muted);
+}
+
+.runpick__note {
+  font-size: 11.5px;
+}

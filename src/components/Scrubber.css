@@ -1,0 +1,40 @@
+/* No top border: the readout above owns it, so the two form one band. */
+.scrub {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 24px 12px;
+  border-bottom: 1px solid var(--grid);
+}
+
+.scrub__play {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--grid);
+  background: var(--surface-raised);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.scrub__play:hover {
+  border-color: var(--muted);
+}
+
+.scrub__range {
+  flex: 1 1 auto;
+  min-width: 0;
+  accent-color: var(--curve);
+  height: 24px;
+  cursor: pointer;
+}
+
+@media (max-width: 620px) {
+  .scrub {
+    padding: 0 16px 12px;
+  }
+}

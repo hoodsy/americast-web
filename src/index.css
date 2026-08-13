@@ -1,0 +1,155 @@
+/*
+ * Theme tokens. The full light palette lives on bare :root, and only the
+ * tokens that change are redefined — once under prefers-color-scheme so the
+ * system default works, and again under [data-theme="dark"] so an explicit
+ * toggle wins in both directions.
+ */
+
+:root {
+  --surface: #fcfcfb;
+  --surface-raised: #ffffff;
+  --ink: #0b0b0b;
+  --muted: #898781;
+  --grid: #e1e0d9;
+
+  /* Sampled from the clearness ramp in lib/clearness.ts — keep in step. */
+  --ramp-0: #1e3a8a;
+  --ramp-25: #5793ec;
+  --ramp-50: #dfeaf7;
+  --ramp-75: #ffab38;
+  --ramp-100: #d92b1f;
+
+  /* The forecast curve and its clear-sky ceiling. */
+  --curve: #b8451c;
+  --ceiling: #ffe6b8;
+  --unlit: #b9b7b0;
+
+  /* The map's ground — mirrors VOID/LAND in lib/clearness.ts. Keep in step. */
+  --map-void: #f8f8f5;
+  --map-grid: #ebeae3;
+  --map-land: #fdfdfb;
+
+  --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --surface: #1a1a19;
+    --surface-raised: #232321;
+    --ink: #ffffff;
+    --muted: #898781;
+    --grid: #2c2c2a;
+
+    --ramp-0: #1b3f8f;
+    --ramp-25: #5f9df0;
+    --ramp-50: #d6e6f5;
+    --ramp-75: #ffb23f;
+    --ramp-100: #ef3b2c;
+
+    --curve: #ff8f3c;
+    --ceiling: #4a2f12;
+    --unlit: #55534e;
+
+    --map-void: #161615;
+    --map-grid: #212120;
+    --map-land: #262624;
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --surface: #1a1a19;
+  --surface-raised: #232321;
+  --ink: #ffffff;
+  --muted: #898781;
+  --grid: #2c2c2a;
+
+  --ramp-0: #1b3f8f;
+  --ramp-25: #5f9df0;
+  --ramp-50: #d6e6f5;
+  --ramp-75: #ffb23f;
+  --ramp-100: #ef3b2c;
+
+  --curve: #ff8f3c;
+  --ceiling: #4a2f12;
+  --unlit: #55534e;
+
+  --map-void: #161615;
+  --map-grid: #212120;
+  --map-land: #262624;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: inherit;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Shown while a run's payload is in flight. A shape settling in, not a
+   spinner that reads as failure. */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.skeleton {
+  background: var(--grid);
+  border-radius: 4px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--curve);
+  outline-offset: 2px;
+}
