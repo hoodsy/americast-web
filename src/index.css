@@ -30,13 +30,20 @@
   --map-land: #fdfdfb;
 
   /*
-   * Sen, with the system stack behind it. Sen ships no `tnum` feature, but it
-   * does not need one: all ten of its digits already carry the same advance
-   * width, so the counter stays put as it climbs. The .tabular class is kept
-   * anyway — it is what holds the columns steady if Sen fails to load and a
-   * proportional system face takes over.
+   * Both faces are loaded so the two can be compared without a rebuild:
+   *
+   *     document.documentElement.dataset.font = 'sen'   // and delete to go back
+   *
+   * They differ in one way that matters here. Sen ships no `tnum` feature but
+   * does not need one — all ten of its digits carry the same 550-unit advance,
+   * so the megawatt counter stays put as it climbs. Lexend has neither: no
+   * `tnum`, and proportional figures spanning 500 to 620 units, so every digit
+   * that changes shifts the ones beside it. The .tabular class cannot fix
+   * that; there is no feature for it to turn on.
    */
-  --font: 'Sen', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-sen: 'Sen', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-lexend: 'Lexend', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font: var(--font-lexend);
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   color-scheme: light;
@@ -90,6 +97,16 @@
   --map-land: #262624;
 
   color-scheme: dark;
+}
+
+/* The comparison switch. Set data-font="sen" on the root to flip the whole
+   page over; remove it to come back to Lexend. */
+:root[data-font='sen'] {
+  --font: var(--font-sen);
+}
+
+:root[data-font='lexend'] {
+  --font: var(--font-lexend);
 }
 
 * {
