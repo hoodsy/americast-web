@@ -124,10 +124,23 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* Everything the reader needs without scrolling: the map, what it adds
-          up to, and the control that moves it. The curve is the second look,
-          and it waits below the fold. */}
-      <div className="fold">
+      {/* The first screen: the map is the ground, edge to edge, and the two
+          things that read it float on top. The curve is the second look, and
+          it waits below. */}
+      <div className="stage">
+        {ready ? (
+          <PlantMap
+            plants={plants}
+            series={series}
+            validTimes={data.plants.valid_times}
+            pos={pos}
+            cursor={cursor}
+            mode={mode}
+          />
+        ) : (
+          <div className="stage__loading skeleton" aria-busy="true" aria-label="Loading forecast" />
+        )}
+
         <nav className="bar">
           <a className="bar__logo" href={REPO} target="_blank" rel="noreferrer">
             Americast
@@ -174,39 +187,29 @@ export default function App() {
             <DeckSkeleton />
           )}
         </section>
-
-        {ready ? (
-          <PlantMap
-            plants={plants}
-            series={series}
-            validTimes={data.plants.valid_times}
-            pos={pos}
-            cursor={cursor}
-            mode={mode}
-          />
-        ) : (
-          <div className="skeleton loading__map" aria-busy="true" aria-label="Loading forecast" />
-        )}
       </div>
 
-      {ready && (
-        <StatewideHero
-          state={stateLevel}
-          validTimes={data.totals.valid_times}
-          runTime={data.totals.run_time}
-          pos={pos}
-          cursor={cursor}
-        />
-      )}
+      <div className="below">
+        {ready && (
+          <StatewideHero
+            state={stateLevel}
+            validTimes={data.totals.valid_times}
+            runTime={data.totals.run_time}
+            pos={pos}
+            cursor={cursor}
+          />
+        )}
 
-      <footer className="foot muted">
-        The statewide total is checked daily against published CAISO data. Everything below it —
-        each plant, and any county or zone figure — is a physical estimate that sums to that total,
-        and is not separately graded, because no hourly per-plant truth is published anywhere.
-        {' '}State boundary from the US Census via <code>usstatesgeojson</code>; the rest of the
-        country, shown dimmed and carrying no forecast, from the US Census via{' '}
-        <code>us-atlas</code>.
-      </footer>
+        <footer className="foot muted">
+          The statewide total is checked daily against published CAISO data. Everything below
+          it — each plant, and any county or zone figure — is a physical estimate that sums to
+          that total, and is not separately graded, because no hourly per-plant truth is
+          published anywhere. State boundary from the US Census via{' '}
+          <code>usstatesgeojson</code>; the rest of the country, shown dimmed and carrying no
+          forecast, from the US Census via{' '}
+          <code>us-atlas</code>.
+        </footer>
+      </div>
     </div>
   );
 }

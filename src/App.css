@@ -2,36 +2,66 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  border-left: 1px solid var(--grid);
-  border-right: 1px solid var(--grid);
 }
 
-/* The first screen, exactly: nav, map, readout, scrubber. Sized so the
-   scrubber lands on the bottom edge of the viewport and the curve below it has
-   to be scrolled to — the map is the thing worth the whole screen.
-
-   dvh over vh so mobile browser chrome does not push the scrubber out of
-   sight; the vh line stays as the fallback for anything without dvh. */
-.fold {
-  display: flex;
-  flex-direction: column;
+/*
+ * The first screen. The map is the ground here — it fills the viewport edge
+ * to edge — and the nav and deck float on it as cards. Nothing below the fold
+ * shares that treatment; this is the only full-bleed thing on the page.
+ *
+ * dvh over vh so mobile browser chrome cannot push the deck out of sight; the
+ * vh line stays as the fallback for anything without dvh.
+ */
+.stage {
+  position: relative;
   height: 100vh;
   height: 100dvh;
-  /* Below this the map is not worth looking at, so the fold gives up and lets
-     the page scroll instead of crushing it. */
-  min-height: 540px;
+  /* Below this the map is not worth looking at and the cards start colliding,
+     so the stage stops shrinking and the page scrolls instead. */
+  min-height: 520px;
+  overflow: hidden;
+
+  /* The cards' gutter and reading width. The legend keeps its own left edge
+     in step with them through these. */
+  --card-inset: 14px;
+  --card-max: 1180px;
+}
+
+/* The map, and the block that stands in for it while a run loads, both fill
+   the stage completely and sit under everything else. */
+.stage > .map,
+.stage__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 0;
+}
+
+/* Shared by both floating cards: centred, held to a reading width, and
+   translucent so the map stays legible underneath. */
+.bar,
+.deck {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: calc(100% - var(--card-inset) * 2);
+  max-width: var(--card-max);
+  border: 1px solid var(--grid);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-raised) 90%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.08);
 }
 
 .bar {
+  top: var(--card-inset);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px 16px;
   flex-wrap: wrap;
-  padding: 9px 24px 10px;
-  border-bottom: 1px solid var(--grid);
+  padding: 9px 14px;
   font-size: 12.5px;
 }
 
@@ -76,6 +106,50 @@
   border-color: var(--muted);
 }
 
+/* --- the deck --- */
+
+/* What is being shown, what it adds up to, and the handle that moves it.
+   Parked on the bottom edge of the map it reads. */
+.deck {
+  bottom: var(--card-inset);
+  padding-bottom: 4px;
+}
+
+.deck__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+  padding: 10px 18px 0;
+}
+
+.deck__title {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Stands in for the readout and scrubber, so the deck keeps its height and
+   nothing jumps the moment data lands. */
+.loading__deck {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 18px 18px;
+}
+
+/* --- below the fold --- */
+
+.below {
+  width: 100%;
+  max-width: var(--card-max, 1180px);
+  margin: 0 auto;
+}
+
 .foot {
   padding: 12px 24px 20px;
   font-size: 11.5px;
@@ -87,49 +161,6 @@
 .foot code {
   font-family: var(--mono);
   font-size: 11px;
-}
-
-/* --- loading --- */
-
-/* The deck: what is being shown, what it adds up to, and the handle that
-   moves it — stacked above the map so the reader meets the numbers before the
-   picture, and drags along a timeline that sits right on top of it. */
-.deck {
-  flex: none;
-  border-bottom: 1px solid var(--grid);
-}
-
-.deck__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 16px;
-  flex-wrap: wrap;
-  padding: 11px 24px 0;
-}
-
-.deck__title {
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.loading__map {
-  flex: 1 1 auto;
-  min-height: 300px;
-  border-radius: 0;
-}
-
-/* Stands in for the readout and scrubber, so the deck keeps its height and
-   the map does not resize the moment data lands. */
-.loading__deck {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 12px 24px 22px;
 }
 
 /* --- error --- */
@@ -172,27 +203,17 @@
   text-align: left;
 }
 
-/* Narrow screens give the fold up entirely: the legend drops below the map
-   here (see PlantMap.css), and pinning all of that to one screen would leave
-   the map a letterbox. The page just scrolls. */
-@media (max-width: 760px) {
-  .fold {
-    height: auto;
-    min-height: 0;
-  }
-}
-
 @media (max-width: 620px) {
-  .bar {
-    padding: 8px 16px 9px;
+  .stage {
+    --card-inset: 10px;
   }
 
   .deck__head {
-    padding: 10px 16px 0;
+    padding: 9px 14px 0;
   }
 
   .loading__deck {
-    padding: 12px 16px 20px;
+    padding: 10px 14px 16px;
   }
 
   .foot {

@@ -57,6 +57,19 @@ const CALIFORNIA_BOUNDS: [[number, number], [number, number]] = [
   [-114.05, 42.05],
 ];
 
+/**
+ * The map runs edge to edge under the floating nav and deck, so fitting to the
+ * raw viewport would park San Diego behind a card. This is the band actually
+ * left open between them — without it the state is framed against space the
+ * reader cannot see.
+ */
+function fitPadding(): { top: number; bottom: number; left: number; right: number } {
+  const narrow = window.innerWidth <= 620;
+  return narrow
+    ? { top: 74, bottom: 250, left: 16, right: 16 }
+    : { top: 84, bottom: 240, left: 32, right: 32 };
+}
+
 interface HoverState {
   plant: Plant;
   x: number;
@@ -102,7 +115,7 @@ export function PlantMap({ plants, series, validTimes, pos, cursor, mode }: Prop
     if (didFit.current) return;
     didFit.current = true;
     requestAnimationFrame(() => {
-      map.fitBounds(CALIFORNIA_BOUNDS, { padding: 24, duration: 0 });
+      map.fitBounds(CALIFORNIA_BOUNDS, { padding: fitPadding(), duration: 0 });
       setZoom(map.getZoom());
     });
   }, []);

@@ -1,11 +1,8 @@
+/* Positioned by .stage, which lays it across the whole first screen. */
 .map {
   position: relative;
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  /* Only shows below the canvas, where the legend drops on narrow screens —
-     the map's own ground is set on .map__canvas. */
-  background: var(--surface);
 }
 
 .map__canvas {
@@ -99,23 +96,28 @@
 /* --- legend --- */
 
 /* A column down the left edge: it reads top-to-bottom in one pass, and it
-   parks over open water rather than over the state. */
+   parks over open water rather than over the state.
+
+   Its left edge tracks the floating cards' rather than the viewport's, so the
+   three line up on wide screens; the top clears the nav card and the height is
+   bounded so it never runs under the deck. */
 .legend {
   position: absolute;
-  left: 16px;
-  top: 16px;
+  left: max(var(--card-inset, 14px), calc(50% - var(--card-max, 1180px) / 2));
+  top: 74px;
   z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 186px;
-  max-height: calc(100% - 32px);
+  max-height: calc(100% - 300px);
   overflow-y: auto;
   padding: 13px 14px;
   border: 1px solid var(--grid);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--surface-raised) 92%, transparent);
-  backdrop-filter: blur(6px);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-raised) 90%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.08);
   font-size: 12px;
 }
 
@@ -180,32 +182,14 @@
   padding-bottom: 1px;
 }
 
-/* Too narrow to spare a column: the legend drops below the map and goes back
-   to a row of blocks. */
-@media (max-width: 760px) {
+/* There is no "below the map" any more — the map is the whole screen — so the
+   legend stays a floating column and just gets narrower. */
+@media (max-width: 620px) {
   .legend {
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    width: auto;
-    max-height: none;
-    overflow-y: visible;
-    border-radius: 0;
-    border-left: 0;
-    border-right: 0;
-    border-bottom: 0;
-    backdrop-filter: none;
-    gap: 16px 22px;
-  }
-
-  .legend__block + .legend__block {
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .legend__ramp,
-  .legend__ends {
+    top: 66px;
     width: 150px;
+    gap: 10px;
+    padding: 10px 11px;
+    max-height: calc(100% - 280px);
   }
 }
