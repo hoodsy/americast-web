@@ -180,16 +180,6 @@
   padding-bottom: 1px;
 }
 
-.legend__note {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.legend__note + .legend__note {
-  margin-top: 4px;
-}
-
 /* Too narrow to spare a column: the legend drops below the map and goes back
    to a row of blocks. */
 @media (max-width: 760px) {

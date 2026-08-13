@@ -31,12 +31,6 @@ export function Legend({ mode }: { mode: Mode }) {
           <span className="legend__size-unit muted">MW</span>
         </div>
       </div>
-
-      <div className="legend__block">
-        <p className="legend__note muted">
-          Weather is sampled on a 3&nbsp;km grid, so nearby plants can share identical conditions.
-        </p>
-      </div>
     </div>
   );
 }

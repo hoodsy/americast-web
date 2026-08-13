@@ -34,7 +34,7 @@ export function Readout({ mw, validTime, runTime }: Props) {
           <span className="readout__date">{formatPacificDate(validTime)}</span>
         </div>
         <div className="readout__caption muted tabular">
-          Pacific · {formatLead(runTime, validTime)} from run
+          Pacific · {formatLead(runTime, validTime)} ahead
         </div>
       </div>
     </div>

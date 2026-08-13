@@ -73,12 +73,10 @@ export default function App() {
       .then((r) => {
         if (!live) return;
         setData(r);
-        // Open on the peak hour, so the first paint says something without
-        // the reader having to touch anything. Landed, not animated — there is
-        // nothing to travel from on a run the reader has not seen.
-        const state = r.totals.levels.find((l) => l.level === 'state');
-        const peak = state ? state.mw.indexOf(Math.max(...state.mw)) : 0;
-        jump(peak < 0 ? 0 : peak);
+        // Open at the start of the forecast, so playing it through means
+        // watching all of it. Landed, not animated — there is nothing to
+        // travel from on a run the reader has not seen.
+        jump(0);
       })
       .catch((e: unknown) => live && setError(e as ApiError));
 
@@ -107,6 +105,9 @@ export default function App() {
   }
 
   const ready = plants !== null && data !== null && stateLevel !== null;
+  // Stated from the payload, not assumed: the heading should not claim 48
+  // hours if a run ever arrives shorter.
+  const hours = data?.totals.valid_times.length ?? 0;
 
   return (
     <div className="app">
@@ -124,45 +125,56 @@ export default function App() {
             Americast
           </a>
 
-          <div className="bar__tools">
+          <ThemeToggle mode={mode} onToggle={toggleTheme} />
+        </nav>
+
+        {/* What is being shown and when, then the control that moves it —
+            all above the map it drives. The picker sits outside the ready
+            gate so a slow run can still be swapped away from. */}
+        <section className="deck">
+          <div className="deck__head">
+            <h2 className="deck__title">{hours ? `${hours} hour forecast` : 'Forecast'}</h2>
             <RunPicker
               runs={runs}
               runTime={data?.totals.run_time ?? runs[0] ?? ''}
               isLatest={runKey === 'latest'}
               onSelect={selectRun}
             />
-            <ThemeToggle mode={mode} onToggle={toggleTheme} />
           </div>
-        </nav>
+
+          {ready ? (
+            <>
+              <Readout
+                mw={sampleSeries(stateLevel.mw, pos)}
+                validTime={data.totals.valid_times[cursor]}
+                runTime={data.totals.run_time}
+              />
+              <Scrubber
+                validTimes={data.totals.valid_times}
+                runTime={data.totals.run_time}
+                pos={pos}
+                cursor={cursor}
+                playing={playing}
+                onSeek={seek}
+                onToggle={toggle}
+              />
+            </>
+          ) : (
+            <DeckSkeleton />
+          )}
+        </section>
 
         {ready ? (
-          <>
-            <PlantMap
-              plants={plants}
-              series={series}
-              validTimes={data.plants.valid_times}
-              pos={pos}
-              cursor={cursor}
-              mode={mode}
-            />
-            {/* The headline figures and the control that moves them, between
-                the two views they describe. */}
-            <Readout
-              mw={sampleSeries(stateLevel.mw, pos)}
-              validTime={data.totals.valid_times[cursor]}
-              runTime={data.totals.run_time}
-            />
-            <Scrubber
-              validTimes={data.totals.valid_times}
-              runTime={data.totals.run_time}
-              cursor={cursor}
-              playing={playing}
-              onSeek={seek}
-              onToggle={toggle}
-            />
-          </>
+          <PlantMap
+            plants={plants}
+            series={series}
+            validTimes={data.plants.valid_times}
+            pos={pos}
+            cursor={cursor}
+            mode={mode}
+          />
         ) : (
-          <FoldSkeleton />
+          <div className="skeleton loading__map" aria-busy="true" aria-label="Loading forecast" />
         )}
       </div>
 
@@ -188,15 +200,12 @@ export default function App() {
   );
 }
 
-/** Holds the fold's shape while a run is in flight, so nothing jumps. */
-function FoldSkeleton() {
+/** Holds the deck's height while a run is in flight, so nothing jumps. */
+function DeckSkeleton() {
   return (
-    <div className="loading" aria-busy="true" aria-label="Loading forecast">
-      <div className="skeleton loading__map" />
-      <div className="loading__deck">
-        <div className="skeleton" style={{ width: 210, height: 46 }} />
-        <div className="skeleton" style={{ width: 150, height: 30 }} />
-      </div>
+    <div className="loading__deck" aria-busy="true" aria-label="Loading forecast">
+      <div className="skeleton" style={{ width: 210, height: 46 }} />
+      <div className="skeleton" style={{ width: 150, height: 30 }} />
     </div>
   );
 }

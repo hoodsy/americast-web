@@ -14,7 +14,7 @@ interface Props {
 
 /**
  * Runs are keyed by the Pacific date they were *issued*, matching the
- * "Run issued …" label on the hero. A 06:00 UTC run is issued at 22:00 or
+ * "Run issued …" line on the hero. A 06:00 UTC run is issued at 22:00 or
  * 23:00 the previous Pacific evening, so its date here is that evening's.
  *
  * Two things the run list does not guarantee, per the API contract: runs are
@@ -73,23 +73,24 @@ export function RunPicker({ runs, runTime, isLatest, onSelect }: Props) {
 
   return (
     <div className="runpick">
-      <label className="runpick__field">
-        <span className="muted">Run issued</span>
-        <input
-          type="date"
-          value={selectedDay}
-          min={days[0] ?? undefined}
-          max={days[days.length - 1] ?? undefined}
-          onChange={(e) => pickDay(e.target.value)}
-          disabled={days.length === 0 || !selectedDay}
-          aria-label="Run issue date, Pacific"
-        />
-      </label>
+      {/* Unlabelled on purpose: sat beside "N hour forecast", the date reads
+          as the forecast's own. The accessible name still says which date it
+          is, because "the forecast's date" is genuinely ambiguous. */}
+      <input
+        type="date"
+        className="runpick__date"
+        value={selectedDay}
+        min={days[0] ?? undefined}
+        max={days[days.length - 1] ?? undefined}
+        onChange={(e) => pickDay(e.target.value)}
+        disabled={days.length === 0 || !selectedDay}
+        aria-label="Forecast issue date, Pacific"
+      />
 
       {sameDayRuns.length > 1 && (
         <label className="runpick__field">
           <span className="muted">at</span>
-          <select value={runTime} onChange={(e) => onSelect(e.target.value)} aria-label="Run issue time">
+          <select value={runTime} onChange={(e) => onSelect(e.target.value)} aria-label="Forecast issue time">
             {sameDayRuns.map((r) => (
               <option key={r} value={r}>
                 {formatPacificTime(r)} PT
@@ -106,7 +107,7 @@ export function RunPicker({ runs, runTime, isLatest, onSelect }: Props) {
       )}
 
       {missing && (
-        <span className="runpick__note muted">Nearest stored run shown — runs are not contiguous.</span>
+        <span className="runpick__note muted">Nearest stored forecast shown.</span>
       )}
     </div>
   );

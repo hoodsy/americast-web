@@ -1,10 +1,8 @@
-/* No top border: the readout above owns it, so the two form one band. */
 .scrub {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 0 24px 12px;
-  border-bottom: 1px solid var(--grid);
+  padding: 2px 24px 12px;
 }
 
 .scrub__play {
@@ -25,16 +23,152 @@
   border-color: var(--muted);
 }
 
-.scrub__range {
+/* --- the timeline --- */
+
+.scrub__track {
+  position: relative;
   flex: 1 1 auto;
   min-width: 0;
-  accent-color: var(--curve);
-  height: 24px;
+  height: 40px;
+}
+
+/* Drawn layer: everything the reader sees. Never takes the pointer — the
+   range input above it owns every interaction. */
+.scrub__ticks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Ruler geometry: the line runs across the top of the track and the hour
+   marks hang below it, so progress never paints over the marks. */
+.scrub__base,
+.scrub__fill {
+  position: absolute;
+  top: 8px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.scrub__base {
+  background: var(--grid);
+}
+
+.scrub__fill {
+  background: var(--curve);
+}
+
+/* One mark per forecast hour, hung off the line. Midnight runs full height
+   and every sixth hour gets a half mark, so the shape of a day is readable
+   without a single label. */
+.scrub__tick {
+  position: absolute;
+  top: 13px;
+  width: 1px;
+  background: var(--muted);
+  transform: translateX(-50%);
+}
+
+.scrub__tick--hour {
+  height: 4px;
+  opacity: 0.34;
+}
+
+.scrub__tick--six {
+  height: 8px;
+  opacity: 0.55;
+}
+
+.scrub__tick--day {
+  height: 11px;
+  opacity: 0.85;
+}
+
+/* Clock reading under each called-out mark. Tabular so the labels do not
+   shuffle sideways by a pixel as the hours change width. */
+.scrub__hour {
+  position: absolute;
+  top: 26px;
+  font-size: 10px;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  opacity: 0.75;
+}
+
+.scrub__hour--day {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.scrub__handle {
+  position: absolute;
+  top: 9px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--curve);
+  border: 2px solid var(--surface);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.22);
+  transform: translate(-50%, -50%);
+}
+
+/* The real control, laid over the drawing and made invisible. It keeps the
+   full hit area, the keyboard behaviour and the screen-reader semantics. */
+.scrub__range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
   cursor: pointer;
+}
+
+.scrub__range::-webkit-slider-runnable-track {
+  height: 100%;
+  background: transparent;
+}
+
+.scrub__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 100%;
+  background: transparent;
+  border: 0;
+}
+
+.scrub__range::-moz-range-track {
+  height: 100%;
+  background: transparent;
+}
+
+.scrub__range::-moz-range-thumb {
+  width: 14px;
+  height: 26px;
+  background: transparent;
+  border: 0;
+}
+
+/* The input itself is invisible, so the focus ring goes on the handle the
+   reader can actually see. */
+.scrub__range:focus-visible {
+  outline: none;
+}
+
+.scrub__range:focus-visible ~ .scrub__ticks .scrub__handle,
+.scrub__track:focus-within .scrub__handle {
+  outline: 2px solid var(--curve);
+  outline-offset: 2px;
 }
 
 @media (max-width: 620px) {
   .scrub {
-    padding: 0 16px 12px;
+    padding: 2px 16px 12px;
   }
 }
