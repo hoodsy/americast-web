@@ -48,9 +48,16 @@
   color: var(--curve);
 }
 
-/* Square, so the sun and the moon occupy exactly the same space and the
-   toggle does not resize as it flips. */
-.bar__theme {
+.bar__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* One square shared by every control on the nav's right edge. Fixed size so
+   the theme toggle does not resize as the sun and moon swap, and so the row
+   stays even whatever each glyph's natural width is. */
+.bar__icon {
   flex: none;
   width: 28px;
   height: 28px;
@@ -61,10 +68,11 @@
   background: var(--surface-raised);
   border: 1px solid var(--grid);
   border-radius: 5px;
+  text-decoration: none;
   cursor: pointer;
 }
 
-.bar__theme:hover {
+.bar__icon:hover {
   border-color: var(--muted);
 }
 

@@ -16,7 +16,7 @@ export function ThemeToggle({ mode, onToggle }: Props) {
   return (
     <button
       type="button"
-      className="bar__theme"
+      className="bar__icon"
       onClick={onToggle}
       aria-label={`Switch to ${next} theme`}
       title={`Switch to ${next} theme`}

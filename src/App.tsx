@@ -7,8 +7,10 @@ import { Readout } from './components/Readout';
 import { PlantMap } from './components/PlantMap';
 import { RunPicker } from './components/RunPicker';
 import { ThemeToggle } from './components/ThemeToggle';
+import { GithubLink } from './components/GithubLink';
 import { usePlayhead } from './lib/playhead';
 import { sampleSeries } from './lib/series';
+import { REPO } from './lib/links';
 import { useTheme } from './lib/theme';
 import './App.css';
 
@@ -127,16 +129,14 @@ export default function App() {
           and it waits below the fold. */}
       <div className="fold">
         <nav className="bar">
-          <a
-            className="bar__logo"
-            href="https://github.com/hoodsy/americast"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="bar__logo" href={REPO} target="_blank" rel="noreferrer">
             Americast
           </a>
 
-          <ThemeToggle mode={mode} onToggle={toggleTheme} />
+          <div className="bar__tools">
+            <GithubLink />
+            <ThemeToggle mode={mode} onToggle={toggleTheme} />
+          </div>
         </nav>
 
         {/* What is being shown and when, then the control that moves it —
