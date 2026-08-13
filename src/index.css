@@ -30,20 +30,16 @@
   --map-land: #fdfdfb;
 
   /*
-   * Both faces are loaded so the two can be compared without a rebuild:
+   * Lexend, with the system stack behind it.
    *
-   *     document.documentElement.dataset.font = 'sen'   // and delete to go back
-   *
-   * They differ in one way that matters here. Sen ships no `tnum` feature but
-   * does not need one — all ten of its digits carry the same 550-unit advance,
-   * so the megawatt counter stays put as it climbs. Lexend has neither: no
-   * `tnum`, and proportional figures spanning 500 to 620 units, so every digit
-   * that changes shifts the ones beside it. The .tabular class cannot fix
-   * that; there is no feature for it to turn on.
+   * Note for anyone touching the numeric readouts: Lexend ships no `tnum`
+   * feature and its figures are proportional, 500 to 620 units, so the
+   * .tabular class is inert here rather than corrective. Digits change width
+   * as they change value — the megawatt figure moves by up to 23px at 42px
+   * type as it counts. Widths have to be pinned in CSS, not asked for in the
+   * font.
    */
-  --font-sen: 'Sen', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --font-lexend: 'Lexend', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
-  --font: var(--font-lexend);
+  --font: 'Lexend', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   color-scheme: light;
@@ -97,16 +93,6 @@
   --map-land: #262624;
 
   color-scheme: dark;
-}
-
-/* The comparison switch. Set data-font="sen" on the root to flip the whole
-   page over; remove it to come back to Lexend. */
-:root[data-font='sen'] {
-  --font: var(--font-sen);
-}
-
-:root[data-font='lexend'] {
-  --font: var(--font-lexend);
 }
 
 * {
