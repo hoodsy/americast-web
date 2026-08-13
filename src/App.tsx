@@ -6,6 +6,7 @@ import { Scrubber } from './components/Scrubber';
 import { Readout } from './components/Readout';
 import { PlantMap } from './components/PlantMap';
 import { RunPicker } from './components/RunPicker';
+import { ThemeToggle } from './components/ThemeToggle';
 import { usePlayhead } from './lib/playhead';
 import { sampleSeries } from './lib/series';
 import { useTheme } from './lib/theme';
@@ -19,7 +20,7 @@ function runFromUrl(): RunKey {
 }
 
 export default function App() {
-  const { mode, preference, cycle } = useTheme();
+  const { mode, toggle: toggleTheme } = useTheme();
 
   const [runKey, setRunKey] = useState<RunKey>(runFromUrl);
   const [runs, setRuns] = useState<Utc[]>([]);
@@ -97,8 +98,6 @@ export default function App() {
     [data],
   );
 
-  const themeLabel = preference === 'system' ? 'Auto' : preference === 'light' ? 'Light' : 'Dark';
-
   if (error) {
     return (
       <div className="app">
@@ -111,55 +110,70 @@ export default function App() {
 
   return (
     <div className="app">
-      <div className="bar">
-        <button type="button" className="bar__theme" onClick={cycle}>
-          Theme: {themeLabel}
-        </button>
+      {/* Everything the reader needs without scrolling: the map, what it adds
+          up to, and the control that moves it. The curve is the second look,
+          and it waits below the fold. */}
+      <div className="fold">
+        <nav className="bar">
+          <a
+            className="bar__logo"
+            href="https://github.com/hoodsy/americast"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Americast
+          </a>
+
+          <div className="bar__tools">
+            <RunPicker
+              runs={runs}
+              runTime={data?.totals.run_time ?? runs[0] ?? ''}
+              isLatest={runKey === 'latest'}
+              onSelect={selectRun}
+            />
+            <ThemeToggle mode={mode} onToggle={toggleTheme} />
+          </div>
+        </nav>
+
+        {ready ? (
+          <>
+            <PlantMap
+              plants={plants}
+              series={series}
+              validTimes={data.plants.valid_times}
+              pos={pos}
+              cursor={cursor}
+              mode={mode}
+            />
+            {/* The headline figures and the control that moves them, between
+                the two views they describe. */}
+            <Readout
+              mw={sampleSeries(stateLevel.mw, pos)}
+              validTime={data.totals.valid_times[cursor]}
+              runTime={data.totals.run_time}
+            />
+            <Scrubber
+              validTimes={data.totals.valid_times}
+              runTime={data.totals.run_time}
+              cursor={cursor}
+              playing={playing}
+              onSeek={seek}
+              onToggle={toggle}
+            />
+          </>
+        ) : (
+          <FoldSkeleton />
+        )}
       </div>
 
-      {ready ? (
-        <>
-          <PlantMap
-            plants={plants}
-            series={series}
-            validTimes={data.plants.valid_times}
-            pos={pos}
-            cursor={cursor}
-            mode={mode}
-          />
-          {/* The headline figures and the control that moves them, between the
-              two views they describe. */}
-          <Readout
-            mw={sampleSeries(stateLevel.mw, pos)}
-            validTime={data.totals.valid_times[cursor]}
-            runTime={data.totals.run_time}
-          />
-          <Scrubber
-            validTimes={data.totals.valid_times}
-            runTime={data.totals.run_time}
-            cursor={cursor}
-            playing={playing}
-            onSeek={seek}
-            onToggle={toggle}
-          />
-          <StatewideHero
-            state={stateLevel}
-            validTimes={data.totals.valid_times}
-            runTime={data.totals.run_time}
-            pos={pos}
-            cursor={cursor}
-            controls={
-              <RunPicker
-                runs={runs}
-                runTime={data.totals.run_time}
-                isLatest={runKey === 'latest'}
-                onSelect={selectRun}
-              />
-            }
-          />
-        </>
-      ) : (
-        <LoadingSkeleton />
+      {ready && (
+        <StatewideHero
+          state={stateLevel}
+          validTimes={data.totals.valid_times}
+          runTime={data.totals.run_time}
+          pos={pos}
+          cursor={cursor}
+        />
       )}
 
       <footer className="foot muted">
@@ -174,14 +188,14 @@ export default function App() {
   );
 }
 
-function LoadingSkeleton() {
+/** Holds the fold's shape while a run is in flight, so nothing jumps. */
+function FoldSkeleton() {
   return (
     <div className="loading" aria-busy="true" aria-label="Loading forecast">
       <div className="skeleton loading__map" />
-      <div className="loading__hero">
-        <div className="skeleton" style={{ width: 220, height: 20 }} />
-        <div className="skeleton" style={{ width: 150, height: 42, marginTop: 12 }} />
-        <div className="skeleton" style={{ width: '100%', height: 200, marginTop: 16 }} />
+      <div className="loading__deck">
+        <div className="skeleton" style={{ width: 210, height: 46 }} />
+        <div className="skeleton" style={{ width: 150, height: 30 }} />
       </div>
     </div>
   );

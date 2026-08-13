@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  min-height: 380px;
   /* Only shows below the canvas, where the legend drops on narrow screens —
      the map's own ground is set on .map__canvas. */
   background: var(--surface);
@@ -12,7 +11,11 @@
 .map__canvas {
   position: relative;
   flex: 1 1 auto;
-  min-height: 0;
+  /* The floor lives on the canvas, not on .map: once the legend drops below
+     the canvas on narrow screens it would otherwise eat into the same budget
+     and leave the map a letterbox. A floor, not a target — inside the fold the
+     canvas simply takes what the nav, readout and scrubber leave. */
+  min-height: 300px;
   /* Graph paper behind the land. The MapLibre canvas is transparent — there is
      no basemap — so this is the ground the country floats on, and the land
      polygons are what hide it. Deliberately not tied to the camera: it is a

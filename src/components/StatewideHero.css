@@ -20,13 +20,7 @@
 }
 
 /* The statewide figure used to live here. It now sits on the scrubber, where
-   the control that changes it is — see Readout. The run picker took its place:
-   the run is what the whole chart is of, so it belongs at the chart's head. */
-.hero__controls {
-  margin-left: auto;
-  display: flex;
-  justify-content: flex-end;
-}
+   the control that changes it is — see Readout. */
 
 .hero__chart {
   width: 100%;

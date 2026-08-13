@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { scaleLinear } from 'd3-scale';
 import { area, line, curveMonotoneX } from 'd3-shape';
-import type { ReactNode } from 'react';
 import type { TotalsLevel } from '../api/types';
 import { sampleSeries } from '../lib/series';
 import { formatPacific, formatPacificHour, pacificDayKey, pacificHour } from '../lib/time';
@@ -17,11 +16,9 @@ interface Props {
   /** Fractional hour — the cursor slides along the curve rather than hopping. */
   pos: number;
   cursor: number;
-  /** Sits at the head's right edge — the run being charted is chosen here. */
-  controls?: ReactNode;
 }
 
-export function StatewideHero({ state, validTimes, runTime, pos, cursor, controls }: Props) {
+export function StatewideHero({ state, validTimes, runTime, pos, cursor }: Props) {
   const [ref, { width }] = useSize<HTMLDivElement>();
   const height = 240;
 
@@ -93,7 +90,6 @@ export function StatewideHero({ state, validTimes, runTime, pos, cursor, control
             Run issued {formatPacific(runTime)} · CAISO balancing area
           </p>
         </div>
-        {controls && <div className="hero__controls">{controls}</div>}
       </header>
 
       <div className="hero__chart" ref={ref}>

@@ -18,8 +18,12 @@ function systemMode(): Mode {
  * Resolves the active mode. CSS does its own theming from `data-theme` and
  * `prefers-color-scheme`; this exists because the map paints in JS and needs
  * the same answer the stylesheet arrived at.
+ *
+ * `system` is still the starting point — an untouched page follows the OS —
+ * but it is not a state the toggle can return to. Once the reader picks a
+ * side, that choice is what sticks.
  */
-export function useTheme(): { mode: Mode; preference: Preference; cycle: () => void } {
+export function useTheme(): { mode: Mode; toggle: () => void } {
   const [preference, setPreference] = useState<Preference>(storedPreference);
   const [system, setSystem] = useState<Mode>(systemMode);
 
@@ -41,9 +45,13 @@ export function useTheme(): { mode: Mode; preference: Preference; cycle: () => v
     }
   }, [preference]);
 
-  const cycle = useCallback(() => {
-    setPreference((p) => (p === 'system' ? 'light' : p === 'light' ? 'dark' : 'system'));
-  }, []);
+  const mode: Mode = preference === 'system' ? system : preference;
 
-  return { mode: preference === 'system' ? system : preference, preference, cycle };
+  // Flips away from whatever is on screen, so the first click always visibly
+  // changes something even when the preference is still inherited.
+  const toggle = useCallback(() => {
+    setPreference(mode === 'dark' ? 'light' : 'dark');
+  }, [mode]);
+
+  return { mode, toggle };
 }
