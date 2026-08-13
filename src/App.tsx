@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchPlants, fetchRun, fetchRuns } from './api/client';
 import { ApiError, type Plant, type PlantSeries, type RunPlantsResponse, type RunTotalsResponse, type Utc } from './api/types';
 import { StatewideHero } from './components/StatewideHero';
@@ -29,9 +29,14 @@ export default function App() {
   const [error, setError] = useState<ApiError | null>(null);
 
   // One playhead, shared: the map, the curve and the readout all move off it.
-  const { pos, cursor, playing, seek, jump, toggle } = usePlayhead(
+  const { pos, cursor, playing, seek, jump, toggle, autoplay } = usePlayhead(
     (data?.totals.valid_times.length ?? 1) - 1,
   );
+
+  // Only the first run of the session rolls by itself. Once the reader has
+  // gone looking for a particular day, taking the playhead off them would be
+  // taking it off someone who is using it.
+  const didAutoplay = useRef(false);
 
   // Bookmarkable runs, and a back button that behaves.
   useEffect(() => {
@@ -77,13 +82,19 @@ export default function App() {
         // watching all of it. Landed, not animated — there is nothing to
         // travel from on a run the reader has not seen.
         jump(0);
+        // Then roll it, so the map is visibly a forecast rather than a
+        // still. It plays through once and stops on the final hour.
+        if (!didAutoplay.current) {
+          didAutoplay.current = true;
+          autoplay();
+        }
       })
       .catch((e: unknown) => live && setError(e as ApiError));
 
     return () => {
       live = false;
     };
-  }, [runKey, jump]);
+  }, [runKey, jump, autoplay]);
 
   const series = useMemo(() => {
     const m = new Map<number, PlantSeries>();

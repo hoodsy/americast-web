@@ -43,6 +43,12 @@ export interface Playhead {
   /** Land on an hour with no animation — for a freshly loaded run. */
   jump: (to: number) => void;
   toggle: () => void;
+  /**
+   * Start playing without being asked. Distinct from `toggle` because motion
+   * nobody requested is motion some readers cannot have: this is a no-op under
+   * prefers-reduced-motion, where pressing play still works fine.
+   */
+  autoplay: () => void;
 }
 
 export function usePlayhead(last: number): Playhead {
@@ -152,7 +158,12 @@ export function usePlayhead(last: number): Playhead {
     setPlay(!playingRef.current);
   }, [last, land, setPlay]);
 
+  const autoplay = useCallback(() => {
+    if (reduced.current) return;
+    setPlay(true);
+  }, [setPlay]);
+
   const cursor = Math.max(0, Math.min(Math.round(pos), Math.max(last, 0)));
 
-  return { pos, cursor, playing, seek, jump, toggle };
+  return { pos, cursor, playing, seek, jump, toggle, autoplay };
 }
