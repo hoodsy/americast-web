@@ -66,8 +66,8 @@ const CALIFORNIA_BOUNDS: [[number, number], [number, number]] = [
 function fitPadding(): { top: number; bottom: number; left: number; right: number } {
   const narrow = window.innerWidth <= 620;
   return narrow
-    ? { top: 74, bottom: 250, left: 16, right: 16 }
-    : { top: 84, bottom: 240, left: 32, right: 32 };
+    ? { top: 74, bottom: 285, left: 16, right: 16 }
+    : { top: 84, bottom: 275, left: 32, right: 32 };
 }
 
 interface HoverState {

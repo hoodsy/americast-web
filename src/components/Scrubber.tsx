@@ -136,6 +136,7 @@ export function Scrubber({
 
   return (
     <div className="scrub">
+      <div className="scrub__controls">
       {/* Labelled rather than a bare glyph: this is the one control that does
           something to the whole page, and it sits under the figure it moves. */}
       <button type="button" className="scrub__run" onClick={onToggle}>
@@ -151,6 +152,15 @@ export function Scrubber({
         )}
         {playing ? 'Pause' : 'Run'}
       </button>
+
+      {/* Reads the two bands in the sparkline below. "Forecast", not
+          "actual" — actuals are observed CAISO output, a different series
+          this page does not carry. */}
+      <p className="scrub__key muted">
+        <span className="key key--forecast" /> Forecast
+        <span className="key key--ceiling" /> Clear-sky ceiling
+      </p>
+      </div>
 
       <div className="scrub__track">
         <div className="scrub__ticks" aria-hidden="true">

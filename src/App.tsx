@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchPlants, fetchRun, fetchRuns } from './api/client';
 import { ApiError, type Plant, type PlantSeries, type RunPlantsResponse, type RunTotalsResponse, type Utc } from './api/types';
-import { StatewideHero } from './components/StatewideHero';
 import { Scrubber } from './components/Scrubber';
 import { Readout } from './components/Readout';
 import { PlantMap } from './components/PlantMap';
@@ -187,29 +186,15 @@ export default function App() {
           ) : (
             <DeckSkeleton />
           )}
+
+          {/* The page is one screen now, so the standing caveat has nowhere
+              below to live. It has to be on the screen it qualifies. */}
+          <p className="deck__note muted">
+            Statewide total graded daily against published CAISO data; every figure beneath it
+            is a physical estimate that sums to it, not a separately graded forecast.
+            Boundaries from the US Census.
+          </p>
         </section>
-      </div>
-
-      <div className="below">
-        {ready && (
-          <StatewideHero
-            state={stateLevel}
-            validTimes={data.totals.valid_times}
-            runTime={data.totals.run_time}
-            pos={pos}
-            cursor={cursor}
-          />
-        )}
-
-        <footer className="foot muted">
-          The statewide total is checked daily against published CAISO data. Everything below
-          it — each plant, and any county or zone figure — is a physical estimate that sums to
-          that total, and is not separately graded, because no hourly per-plant truth is
-          published anywhere. State boundary from the US Census via{' '}
-          <code>usstatesgeojson</code>; the rest of the country, shown dimmed and carrying no
-          forecast, from the US Census via{' '}
-          <code>us-atlas</code>.
-        </footer>
       </div>
     </div>
   );

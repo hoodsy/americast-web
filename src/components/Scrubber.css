@@ -7,8 +7,46 @@
   padding: 0 18px 8px;
 }
 
+/* Run on the left, the sparkline's key on the right — one row, so the key
+   costs no height of its own. */
+.scrub__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+}
+
+.scrub__key {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: 11.5px;
+}
+
+.key {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.key--forecast {
+  background: var(--curve);
+  opacity: 0.6;
+}
+
+.key--ceiling {
+  background: var(--ceiling);
+}
+
+.key:not(:first-child) {
+  margin-left: 8px;
+}
+
 .scrub__run {
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 7px;

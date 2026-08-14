@@ -3,16 +3,16 @@
  * arithmetic in it — differences are taken on epoch milliseconds, and the
  * time zone only ever enters at the formatting step.
  *
- * Clocks read as 12-hour with AM/PM. The date half stays day-month ("Sat
- * 15 Jun"), so the two are composed from separate formatters rather than
- * pulled out of one locale's idea of how to join them.
+ * Clocks read as 12-hour with AM/PM. The date half stays day-month
+ * ("Saturday 15 Jun"), so the two are composed from separate formatters
+ * rather than pulled out of one locale's idea of how to join them.
  */
 
 const PT = 'America/Los_Angeles';
 
 const dateOnly = new Intl.DateTimeFormat('en-GB', {
   timeZone: PT,
-  weekday: 'short',
+  weekday: 'long',
   day: 'numeric',
   month: 'short',
 });
@@ -44,12 +44,12 @@ const hour24 = new Intl.DateTimeFormat('en-US', {
   hour12: false,
 });
 
-/** "Sat 15 Jun, 11:00 AM PT" */
+/** "Saturday 15 Jun, 11:00 AM PT" */
 export function formatPacific(iso: string): string {
   return `${formatPacificDate(iso)}, ${formatPacificTime(iso)} PT`;
 }
 
-/** "Sat 15 Jun" */
+/** "Saturday 15 Jun" */
 export function formatPacificDate(iso: string): string {
   return dateOnly.format(new Date(iso));
 }
