@@ -124,7 +124,14 @@ export default function App() {
     return aligned ? start : null;
   }, [forecast, plantRun]);
 
-  const mapSeries = mapOffset === null ? new Map<number, PlantSeries>() : series;
+  /**
+   * With no aligned hours there is nothing to plot, and the plants are dropped
+   * rather than drawn unlit. Unlit is not "no data" in this map's language —
+   * it means no meaningful sun — so a fleet of empty rings at midday would be
+   * a false claim rather than a blank. Bare geography says the true thing.
+   */
+  const canPlot = mapOffset !== null;
+  const mapPlants = canPlot ? (plants ?? []) : [];
   const mapPos = pos + (mapOffset ?? 0);
   const mapCursor = cursor + (mapOffset ?? 0);
 
@@ -151,8 +158,8 @@ export default function App() {
             honest ground for the deck — a skeleton that never resolves is
             not. */}
         <PlantMap
-          plants={plants ?? []}
-          series={mapSeries}
+          plants={mapPlants}
+          series={series}
           validTimes={plantRun?.valid_times ?? forecast?.valid_times ?? []}
           pos={mapPos}
           cursor={mapCursor}
