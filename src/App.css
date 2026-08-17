@@ -151,15 +151,6 @@
   padding: 12px 18px 18px;
 }
 
-/* The standing caveat. Small, but on the screen it qualifies — there is no
-   longer anywhere below the fold to put it. */
-.deck__note {
-  margin: 0;
-  padding: 2px 18px 8px;
-  font-size: 10.5px;
-  line-height: 1.45;
-}
-
 /* --- error --- */
 
 .error {
@@ -213,7 +204,4 @@
     padding: 10px 14px 16px;
   }
 
-  .deck__note {
-    padding: 2px 14px 8px;
-  }
 }

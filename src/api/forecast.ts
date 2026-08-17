@@ -58,12 +58,6 @@ export interface Accuracy {
   graded_hours?: number;
 }
 
-/**
- * Below this the record is too short to characterise anything, and quoting it
- * without saying so would dress up nine hours as a track record. A week.
- */
-export const THIN_RECORD_HOURS = 168;
-
 export interface ForecastResponse {
   schema_version: number;
   region: Region;

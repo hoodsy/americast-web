@@ -5,8 +5,6 @@ import {
   fetchForecast,
   fetchRegions,
   STALE_AFTER_HOURS,
-  THIN_RECORD_HOURS,
-  type Accuracy,
   type ForecastResponse,
   type Region,
 } from './api/forecast';
@@ -204,41 +202,9 @@ export default function App() {
           ) : (
             <DeckSkeleton />
           )}
-
-          {/* The page is one screen, so the standing caveats have nowhere below
-              to live. They have to be on the screen they qualify. */}
-          <p className="deck__note muted">
-            <AccuracyNote accuracy={forecast?.accuracy ?? null} />{' '}
-            Every plant on the map is a physical estimate that sums to the statewide total, not a
-            separately graded forecast. Boundaries from the US Census.
-          </p>
         </section>
       </div>
     </div>
-  );
-}
-
-/**
- * The track record, said plainly, including when there is barely one. Nine
- * graded hours is not a track record, and a bare "mean error 1,157 MW" would
- * read as though it were — so the sample size is quoted alongside until it is
- * long enough to stand without it.
- */
-function AccuracyNote({ accuracy }: { accuracy: Accuracy | null }) {
-  if (!accuracy || accuracy.mae_mw === undefined) {
-    return <>Not yet graded — the record against published CAISO data has only just begun.</>;
-  }
-
-  const mae = Math.round(accuracy.mae_mw).toLocaleString('en-US');
-  const hours = accuracy.graded_hours;
-  const thin = hours !== undefined && hours < THIN_RECORD_HOURS;
-
-  return (
-    <>
-      Graded against published CAISO data: mean error {mae} MW
-      {hours === undefined ? '' : ` over ${hours} graded hour${hours === 1 ? '' : 's'}`}
-      {thin ? ', too short a record yet to read much into' : ''}.
-    </>
   );
 }
 
