@@ -4,6 +4,8 @@ import './Readout.css';
 interface Props {
   /** Statewide megawatts, already sampled at the playhead so it counts. */
   mw: number;
+  /** The run's own peak. Published pre-computed; never recomputed here. */
+  peakMw: number;
   /** The hour the reader is on. Never interpolated — the forecast is hourly. */
   validTime: string;
   runTime: string;
@@ -17,7 +19,7 @@ interface Props {
  * because a clock reading "13:24" would be claiming a forecast we do not have.
  * The number is a readout settling; the hour is a fact.
  */
-export function Readout({ mw, validTime, runTime }: Props) {
+export function Readout({ mw, peakMw, validTime, runTime }: Props) {
   return (
     <div className="readout">
       <div className="readout__block">
@@ -25,7 +27,10 @@ export function Readout({ mw, validTime, runTime }: Props) {
           {Math.round(mw).toLocaleString('en-US')}
           <span className="readout__unit">MW</span>
         </div>
-        <div className="readout__caption muted">Statewide solar output</div>
+        <div className="readout__caption muted">
+          Statewide solar output · peak{' '}
+          <span className="tabular">{Math.round(peakMw).toLocaleString('en-US')}</span> MW
+        </div>
       </div>
 
       {/* Same shape as the block opposite: one figure carrying the weight,

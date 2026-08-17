@@ -28,8 +28,10 @@ const SPARK_H = 28;
 interface Props {
   validTimes: string[];
   runTime: string;
-  /** Statewide megawatts and its clear-sky ceiling — the curve, in miniature. */
+  /** The forecast line, its p10–p90 band, and the clear-sky ceiling behind. */
   mw: number[];
+  low: number[];
+  high: number[];
   clearMw: number[];
   /** Fractional hour, so the fill and handle glide rather than step. */
   pos: number;
@@ -50,6 +52,8 @@ export function Scrubber({
   validTimes,
   runTime,
   mw,
+  low,
+  high,
   clearMw,
   pos,
   cursor,
@@ -71,8 +75,10 @@ export function Scrubber({
    * every peak sits exactly over its own tick whatever the deck's width.
    */
   const spark = useMemo(() => {
-    const peak = Math.max(...clearMw, ...mw, 1);
+    // The ceiling is always the highest of the three, so it alone sets the top.
+    const peak = Math.max(...clearMw, ...high, ...mw, 1);
     const y = scaleLinear().domain([0, peak]).range([SPARK_H, 0]);
+
     const toArea = area<number>()
       .x((_, i) => i)
       .y0(SPARK_H)
@@ -82,13 +88,20 @@ export function Scrubber({
       .x((_, i) => i)
       .y((d) => y(d))
       .curve(curveMonotoneX);
+    // The band is bounded by two forecasts rather than by the axis.
+    const toBand = area<number>()
+      .x((_, i) => i)
+      .y0((_, i) => y(low[i] ?? 0))
+      .y1((_, i) => y(high[i] ?? 0))
+      .curve(curveMonotoneX);
 
     return {
       ceiling: toArea(clearMw) ?? '',
+      band: toBand(high) ?? '',
       forecast: toArea(mw) ?? '',
       edge: toLine(mw) ?? '',
     };
-  }, [mw, clearMw]);
+  }, [mw, low, high, clearMw]);
 
   /**
    * The marks never move, so they are built as elements once and held. The
@@ -158,7 +171,8 @@ export function Scrubber({
           this page does not carry. */}
       <p className="scrub__key muted">
         <span className="key key--forecast" /> Forecast
-        <span className="key key--ceiling" /> Clear-sky ceiling
+        <span className="key key--band" /> p10–p90
+        <span className="key key--ceiling" /> Clear sky
       </p>
       </div>
 
@@ -176,6 +190,7 @@ export function Scrubber({
               </clipPath>
             </defs>
             <path d={spark.ceiling} className="scrub__spark-ceiling" />
+            <path d={spark.band} className="scrub__spark-band" />
             <path d={spark.forecast} className="scrub__spark-ahead" />
             <path d={spark.forecast} className="scrub__spark-done" clipPath="url(#scrub-played)" />
             <path d={spark.edge} className="scrub__spark-edge" vectorEffect="non-scaling-stroke" />

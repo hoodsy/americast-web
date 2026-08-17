@@ -13,7 +13,17 @@ export interface RunsResponse {
   runs: Utc[];
 }
 
-export type Zone = 'kern' | 'mojave' | 'imperial' | 'central_valley' | 'coastal';
+/**
+ * Six, not five: `sonoran` arrived with Arizona when the plant registry moved
+ * from filtering on the state line to filtering on the balancing authority.
+ */
+export type Zone =
+  | 'kern'
+  | 'mojave'
+  | 'imperial'
+  | 'central_valley'
+  | 'coastal'
+  | 'sonoran';
 
 export interface Plant {
   plant_id: number;
