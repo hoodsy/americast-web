@@ -38,11 +38,6 @@
   opacity: 0.6;
 }
 
-.key--band {
-  background: var(--curve);
-  opacity: 0.3;
-}
-
 .key--ceiling {
   background: var(--ceiling);
 }
@@ -111,12 +106,6 @@
   opacity: 0.5;
 }
 
-/* Where the forecast might land, eight times in ten. Sits over the ceiling and
-   under the forecast, so all three read as one stack. */
-.scrub__spark-band {
-  fill: var(--curve);
-  opacity: 0.2;
-}
 
 /* Ahead of the playhead the forecast is drawn faintly; behind it, filled. */
 .scrub__spark-ahead {

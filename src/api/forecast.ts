@@ -38,11 +38,31 @@ export interface RegionsResponse {
 }
 
 /**
- * Shape unknown at the time of writing: it is `null` until thirty days of
- * graded history exist, and grading began 2026-08-16. Left deliberately loose
- * rather than invented — the only claim this file makes is present or absent.
+ * The recent track record. Absent until grading has something to say — it was
+ * `null` for the first day and populated on 2026-08-17.
+ *
+ * Every field is optional on purpose. This shape was read off the live object
+ * rather than from a published schema, so the renderer degrades to whatever is
+ * actually there instead of asserting fields it has only ever seen once.
  */
-export type Accuracy = Record<string, unknown>;
+export interface Accuracy {
+  /** Length of the rolling window, in days. */
+  window_days?: number;
+  /** Mean absolute error over the window. */
+  mae_mw?: number;
+  /** Signed error: negative means the forecast runs low. */
+  bias_mw?: number;
+  /** Share of hours the p10–p90 band actually contained. Target is 0.8. */
+  coverage?: number;
+  /** How many hours the numbers above are computed from. */
+  graded_hours?: number;
+}
+
+/**
+ * Below this the record is too short to characterise anything, and quoting it
+ * without saying so would dress up nine hours as a track record. A week.
+ */
+export const THIN_RECORD_HOURS = 168;
 
 export interface ForecastResponse {
   schema_version: number;
