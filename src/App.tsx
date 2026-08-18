@@ -14,6 +14,7 @@ import { Readout } from './components/Readout';
 import { PlantMap } from './components/PlantMap';
 import { ThemeToggle } from './components/ThemeToggle';
 import { GithubLink } from './components/GithubLink';
+import { RunButton } from './components/RunButton';
 import { usePlayhead } from './lib/playhead';
 import { sampleSeries } from './lib/series';
 import { formatPacificDate, setZone } from './lib/time';
@@ -160,6 +161,8 @@ export default function App() {
           mode={mode}
         />
 
+        <RunButton playing={playing} onToggle={toggle} />
+
         <nav className="bar">
           <a className="bar__logo" href={REPO} target="_blank" rel="noreferrer">
             Americast
@@ -205,9 +208,7 @@ export default function App() {
                 clearMw={forecast.clear_sky_mw}
                 pos={pos}
                 cursor={cursor}
-                playing={playing}
                 onSeek={seek}
-                onToggle={toggle}
               />
             </>
           ) : (

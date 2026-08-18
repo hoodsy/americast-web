@@ -7,22 +7,11 @@
   padding: 0 18px 8px;
 }
 
-/* Run on the left, the sparkline's key on the right — one row, so the key
-   costs no height of its own. */
-.scrub__controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 20px;
-  flex-wrap: wrap;
-}
-
-/* The button, the key, and the hours under the track are all the same rank
-   of label, so they are set identically and only colour and opacity separate
-   them. One of them looking heavier would be claiming a hierarchy that the
-   band does not have. */
+/* The key and the hours under the track are the same rank of label as the
+   run button off on the stage, so all three are set identically and only
+   colour and opacity separate them. One looking heavier would be claiming a
+   hierarchy the band does not have. */
 .scrub__key,
-.scrub__run,
 .scrub__hour {
   font-size: 11.5px;
   font-weight: 600;
@@ -30,7 +19,9 @@
   text-transform: uppercase;
 }
 
+/* Sits over the right end of the track it reads, and costs one short line. */
 .scrub__key {
+  align-self: flex-end;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -56,27 +47,6 @@
 
 .key:not(:first-child) {
   margin-left: 8px;
-}
-
-.scrub__run {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 30px;
-  padding: 0 15px;
-  border: 1px solid var(--grid);
-  border-radius: 6px;
-  background: var(--surface-raised);
-  color: var(--ink);
-  font: inherit;
-  /* Both labels have to fit without the button resizing as it flips. */
-  min-width: 82px;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.scrub__run:hover {
-  border-color: var(--muted);
 }
 
 /* --- the timeline --- */

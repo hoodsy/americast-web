@@ -1,0 +1,45 @@
+/* Mirrors the legend across the stage: same top, and a left edge that tracks
+   the floating cards' rather than the viewport's, so the three line up on wide
+   screens. Off the deck it has no card behind it any more, so it carries the
+   same translucent surface the legend does — the map runs underneath. */
+.run {
+  position: absolute;
+  left: max(var(--card-inset, 14px), calc(50% - var(--card-max, 1180px) / 2));
+  top: 74px;
+  z-index: 2;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 15px;
+  /* Both labels have to fit without the button resizing as it flips. */
+  min-width: 82px;
+
+  border: 1px solid var(--grid);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface-raised) 90%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.08);
+  color: var(--ink);
+  cursor: pointer;
+
+  /* Set as the scrubber's labels are — this is the same rank of small caps,
+     and it should not gain weight for having moved off the deck. */
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.run:hover {
+  border-color: var(--muted);
+}
+
+@media (max-width: 620px) {
+  .run {
+    top: 66px;
+  }
+}

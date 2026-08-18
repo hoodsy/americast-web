@@ -34,9 +34,7 @@ interface Props {
   /** Fractional hour, so the fill and handle glide rather than step. */
   pos: number;
   cursor: number;
-  playing: boolean;
   onSeek: (i: number) => void;
-  onToggle: () => void;
 }
 
 /**
@@ -53,9 +51,7 @@ export function Scrubber({
   clearMw,
   pos,
   cursor,
-  playing,
   onSeek,
-  onToggle,
 }: Props) {
   const last = Math.max(validTimes.length - 1, 1);
   const validTime = validTimes[cursor];
@@ -138,23 +134,6 @@ export function Scrubber({
 
   return (
     <div className="scrub">
-      <div className="scrub__controls">
-      {/* Labelled rather than a bare glyph: this is the one control that does
-          something to the whole page, and it sits under the figure it moves. */}
-      <button type="button" className="scrub__run" onClick={onToggle}>
-        {playing ? (
-          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
-            <rect x="3" y="2.5" width="3.5" height="11" rx="1" fill="currentColor" />
-            <rect x="9.5" y="2.5" width="3.5" height="11" rx="1" fill="currentColor" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
-            <path d="M4 2.6v10.8a.7.7 0 0 0 1.07.6l8.4-5.4a.7.7 0 0 0 0-1.2L5.07 2a.7.7 0 0 0-1.07.6Z" fill="currentColor" />
-          </svg>
-        )}
-        {playing ? 'Pause' : 'Run'}
-      </button>
-
       {/* Reads the two bands in the sparkline below. "Forecast", not
           "actual" — actuals are observed CAISO output, a different series
           this page does not carry. */}
@@ -162,7 +141,6 @@ export function Scrubber({
         <span className="key key--forecast" /> Forecast
         <span className="key key--ceiling" /> Clear sky
       </p>
-      </div>
 
       <div className="scrub__track">
         <div className="scrub__ticks" aria-hidden="true">
