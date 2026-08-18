@@ -236,4 +236,11 @@
   .scrub {
     padding: 0 14px 8px;
   }
+
+  /* Eight labels under a phone-width track collide into one grey smear. The
+     ticks all stay — the ruler is still hourly — but only the twelve-hour
+     marks are named, which is enough to place any point on it. */
+  .scrub__hour:not(.scrub__hour--day):not(.scrub__hour--half) {
+    display: none;
+  }
 }

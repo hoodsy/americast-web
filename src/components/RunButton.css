@@ -41,5 +41,9 @@
 @media (max-width: 620px) {
   .run {
     top: 66px;
+    /* A thumb's worth of button, since this is the one thing on the stage
+       anyone taps. */
+    height: 36px;
+    padding: 0 17px;
   }
 }

@@ -204,9 +204,17 @@
 @media (max-width: 620px) {
   .legend {
     top: 66px;
-    width: 178px;
+    width: 152px;
     gap: 10px;
     padding: 10px 11px;
     max-height: calc(100% - 280px);
+  }
+
+  .legend__end-n {
+    display: none;
+  }
+
+  .legend__sizes {
+    gap: 9px;
   }
 }

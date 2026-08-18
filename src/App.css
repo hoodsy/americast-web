@@ -143,16 +143,17 @@
   text-transform: uppercase;
 }
 
-/* Dates the hour below it, from the title's own line. Set in caps like the
-   title it aligns to — two lowercase words against small caps read as a
-   misalignment even when the baselines agree. */
+/* Dates the hour below it, from the title's own line. Set exactly as the
+   title is — same size, weight and tracking — because two different sizes
+   sharing a line read as a misalignment however well their baselines agree.
+   The hour underneath is the headline; this only says which day it is. */
 .deck__date {
   /* Holds the right edge even on a narrow deck, where the row wraps and
      space-between has nothing left to push against. */
   margin-left: auto;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -219,8 +220,37 @@
     --card-inset: 10px;
   }
 
+  /* No phone is wide enough for the title and the date on one line, and a
+     title broken around the date reads as two severed fragments. So on a
+     phone the head is stripped to the date, which drops to a line of its own
+     hard against the right edge — landing directly over the hour it dates,
+     the two reading as one column again.
+
+     The lede keeps a full-width row underneath it all the same: a warning
+     about the run is not a title, and it should not have to share a line with
+     the date on the rare occasion there is one. */
   .deck__head {
+    gap: 2px 10px;
     padding: 9px 14px 0;
+  }
+
+  .deck__lede {
+    flex: 1 0 100%;
+  }
+
+  .deck__title {
+    display: none;
+  }
+
+  .deck__date {
+    white-space: nowrap;
+  }
+
+  /* Big enough to hit with a thumb. Nothing in the bar is dense enough for
+     the extra few pixels to cost anything. */
+  .bar__icon {
+    width: 34px;
+    height: 34px;
   }
 
   .loading__deck {

@@ -10,9 +10,15 @@ export function Legend({ mode }: { mode: Mode }) {
       <div className="legend__block">
         <div className="legend__label">Clearness</div>
         <div className="legend__ramp" style={{ background: rampGradient(mode) }} />
+        {/* The scale's numbers are dropped on a phone, where the two ends
+            would otherwise run into each other. What they name survives. */}
         <div className="legend__ends muted">
-          <span>0 · overcast</span>
-          <span>1 · clear sky</span>
+          <span>
+            <span className="legend__end-n">{'0 · '}</span>overcast
+          </span>
+          <span>
+            <span className="legend__end-n">{'1 · '}</span>clear sky
+          </span>
         </div>
       </div>
 

@@ -30,7 +30,7 @@
 }
 
 .readout__unit {
-  font-size: 17px;
+  font-size: 0.45em;
   font-weight: 500;
   letter-spacing: 0;
   color: var(--muted);
@@ -52,15 +52,55 @@
   text-transform: uppercase;
 }
 
+/* On a phone the captions cannot both sit beside their figures — the left one
+   is far too long for half a 320px screen and shatters into three lines. So
+   the deck is laid out explicitly instead: the two figures share the top row
+   and stay level, and each caption gets a full-width row under them, holding
+   the edge its figure holds. Nothing has to fit beside anything. */
 @media (max-width: 620px) {
   .readout {
-    align-items: flex-start;
-    gap: 12px 20px;
-    padding: 6px 14px 8px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 14px;
+    row-gap: 2px;
+    padding: 1px 14px 8px;
   }
 
+  /* The blocks stop being boxes and hand their children to the grid; the
+     right-hand alignment they carry is inherited, so it survives. */
+  .readout__block {
+    display: contents;
+  }
+
+  .readout__value {
+    grid-area: 1 / 1;
+  }
+
+  .readout__when {
+    grid-area: 1 / 2;
+  }
+
+  /* The megawatts caption goes. It is the longest line in the deck and the
+     first to wrap, and what it says — that this is statewide output — is the
+     one thing about the figure nobody needs told twice. The hour keeps its
+     caption, which carries the timezone and the lead. */
+  .readout__caption {
+    display: none;
+  }
+
+  .readout__block--when .readout__caption {
+    display: block;
+    grid-area: 2 / 1 / auto / span 2;
+    margin-top: 3px;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+  }
+
+  /* One size for both, scaled to the viewport so the row holds together on a
+     320px screen without being timid on a 414px one. */
   .readout__value,
   .readout__when {
-    font-size: 30px;
+    font-size: clamp(22px, 7.4vw, 30px);
   }
 }

@@ -103,6 +103,9 @@ export function Scrubber({
       const hour = pacificHour(t);
       const dayStart = i > 0 && pacificDayKey(t) !== pacificDayKey(validTimes[i - 1]);
       const kind = dayStart || hour === 0 ? 'day' : hour % 6 === 0 ? 'six' : 'hour';
+      // Noon earns a label on a narrow track, where the six-hour ones are
+      // dropped: midnight alone would leave the day with no middle.
+      const half = hour === 12;
       const frac = i / last;
 
       out.push(
@@ -119,7 +122,9 @@ export function Scrubber({
       out.push(
         <span
           key={`${t}-label`}
-          className={`scrub__hour${kind === 'day' ? ' scrub__hour--day' : ''}`}
+          className={`scrub__hour${kind === 'day' ? ' scrub__hour--day' : ''}${
+            half ? ' scrub__hour--half' : ''
+          }`}
           style={edge ?? { left: at(frac), transform: 'translateX(-50%)' }}
         >
           {formatPacificHour(t)}
