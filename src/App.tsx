@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { fetchPlants, fetchRunPlants } from './api/client';
+import { fetchPlants, fetchRunPlants, fetchRuns } from './api/client';
 import {
   ageHours,
   fetchForecast,
@@ -16,7 +16,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { GithubLink } from './components/GithubLink';
 import { usePlayhead } from './lib/playhead';
 import { sampleSeries } from './lib/series';
-import { setZone } from './lib/time';
+import { formatPacificDate, setZone } from './lib/time';
 import { REPO } from './lib/links';
 import { useTheme } from './lib/theme';
 import './App.css';
@@ -25,17 +25,18 @@ export default function App() {
   const { mode, toggle: toggleTheme } = useTheme();
 
   /**
-   * Two sources, deliberately unequal. The forecast is three static objects on
-   * S3 and is always there; the map needs an origin that is not deployed yet.
-   * So the forecast decides whether the page works, and the map is something
-   * the page gains when it can reach it.
+   * Two objects, one run. Both halves are published by the same job each
+   * morning, so the map is the forecast's own run rather than whatever the
+   * per-plant store happened to reach. The forecast still decides whether the
+   * page works: a run issued before the job began storing its weather has no
+   * map, and the page is honest with bare geography underneath.
    */
   const [region, setRegion] = useState<Region | null>(null);
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [plants, setPlants] = useState<Plant[] | null>(null);
-  const [plantRun, setPlantRun] = useState<RunPlantsResponse | null>(null);
+  const [mapRun, setMapRun] = useState<RunPlantsResponse | null>(null);
 
   // One playhead, shared: the map, the sparkline and the readout move off it.
   const { pos, cursor, playing, seek, jump, toggle, autoplay } = usePlayhead(
@@ -76,24 +77,31 @@ export default function App() {
   }, [jump, autoplay]);
 
   /**
-   * The map, asked for at the forecast's own run so the two halves describe
-   * the same hours. Failure is silent on purpose: until the map API is
-   * deployed this will fail for everyone, and a forecast with no map is still
-   * the whole of what phase one promises.
+   * The map. Failure is silent on purpose: the deck stands on its own, and a
+   * page with no map is still the whole of what phase one promises.
    */
   useEffect(() => {
     if (!forecast) return;
     let live = true;
 
-    Promise.all([fetchPlants(), fetchRunPlants(forecast.run_time)])
-      .then(([p, r]) => {
-        if (!live) return;
-        setPlants(p.plants);
-        setPlantRun(r);
+    fetchPlants()
+      .then((p) => live && setPlants(p.plants))
+      .catch(() => undefined);
+
+    // The forecast's own run, found in the index rather than spelled out
+    // here — the index is what lets a second region or a second run hour a
+    // day appear without a deploy. Matched on the instant, because the two
+    // objects spell UTC differently and always have.
+    fetchRuns()
+      .then((index) => {
+        const issued = Date.parse(forecast.run_time);
+        const entry = index.runs.find((r) => Date.parse(r.run_time) === issued);
+        if (!entry) return undefined;
+        return fetchRunPlants(entry.path).then((r) => {
+          if (live) setMapRun(r);
+        });
       })
-      .catch(() => {
-        /* phase two */
-      });
+      .catch(() => undefined);
 
     return () => {
       live = false;
@@ -102,38 +110,21 @@ export default function App() {
 
   const series = useMemo(() => {
     const m = new Map<number, PlantSeries>();
-    for (const s of plantRun?.plants ?? []) m.set(s.plant_id, s);
+    for (const s of mapRun?.plants ?? []) m.set(s.plant_id, s);
     return m;
-  }, [plantRun]);
+  }, [mapRun]);
 
   /**
-   * How far the map run's hours are shifted from the forecast's, matched on
-   * the instant rather than the string — the two products spell UTC
-   * differently. Null when the grids do not line up hour for hour, in which
-   * case the plants are drawn unlit rather than drawn against the wrong hour.
+   * The map and the curve are the same run, so index i means the same hour in
+   * both and there is no offset to carry. The length check is all that is
+   * left of that: with nothing to plot the plants are dropped rather than
+   * drawn unlit, because unlit is not "no data" in this map's language — it
+   * means no meaningful sun, and a fleet of empty rings at midday would be a
+   * false claim. Bare geography says the true thing.
    */
-  const mapOffset = useMemo(() => {
-    if (!forecast || !plantRun) return null;
-    const epochs = plantRun.valid_times.map((t) => Date.parse(t));
-    const start = epochs.indexOf(Date.parse(forecast.valid_times[0]));
-    if (start < 0) return null;
-
-    const aligned = forecast.valid_times.every(
-      (t, i) => epochs[start + i] === Date.parse(t),
-    );
-    return aligned ? start : null;
-  }, [forecast, plantRun]);
-
-  /**
-   * With no aligned hours there is nothing to plot, and the plants are dropped
-   * rather than drawn unlit. Unlit is not "no data" in this map's language —
-   * it means no meaningful sun — so a fleet of empty rings at midday would be
-   * a false claim rather than a blank. Bare geography says the true thing.
-   */
-  const canPlot = mapOffset !== null;
+  const canPlot =
+    forecast != null && mapRun?.valid_times.length === forecast.valid_times.length;
   const mapPlants = canPlot ? (plants ?? []) : [];
-  const mapPos = pos + (mapOffset ?? 0);
-  const mapCursor = cursor + (mapOffset ?? 0);
 
   const stale = forecast ? ageHours(forecast.generated_at) > STALE_AFTER_HOURS : false;
 
@@ -146,7 +137,10 @@ export default function App() {
   }
 
   const ready = forecast !== null;
-  const hours = forecast?.valid_times.length ?? 0;
+
+  /* The head carries only what qualifies the forecast — the run stamp lives
+     with the reading below, so it is not said twice. */
+  const notes = [stale ? 'may be stale' : ''].filter(Boolean);
 
   return (
     <div className="app">
@@ -160,9 +154,9 @@ export default function App() {
         <PlantMap
           plants={mapPlants}
           series={series}
-          validTimes={plantRun?.valid_times ?? forecast?.valid_times ?? []}
-          pos={mapPos}
-          cursor={mapCursor}
+          validTimes={forecast?.valid_times ?? []}
+          pos={pos}
+          cursor={cursor}
           mode={mode}
         />
 
@@ -178,12 +172,22 @@ export default function App() {
         </nav>
 
         <section className="deck">
+          {/* The date is hoisted out of the readout to sit on this line, so it
+              rides at the same height as the title it is dated by. The hour
+              below stays the headline; this only says which day it is. */}
           <div className="deck__head">
-            <h2 className="deck__title">
-              {hours ? `${hours} hour forecast` : 'Forecast'}
-              {region ? ` · ${region.name}` : ''}
-            </h2>
-            {stale && <span className="deck__stale">Forecast may be stale</span>}
+            <div className="deck__lede">
+              <h2 className="deck__title">
+                {ready ? '48 hour forecast' : 'Forecast'}
+                {region ? ` · ${region.name}` : ''}
+              </h2>
+              {notes.length > 0 ? <span className="deck__run muted">{notes.join(' · ')}</span> : null}
+            </div>
+            {ready ? (
+              <span className="deck__date muted tabular">
+                {formatPacificDate(forecast.valid_times[cursor])}
+              </span>
+            ) : null}
           </div>
 
           {ready ? (

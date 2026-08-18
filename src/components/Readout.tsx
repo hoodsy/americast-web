@@ -1,4 +1,4 @@
-import { formatLead, formatPacificDate, formatPacificTime } from '../lib/time';
+import { formatLead, formatPacificTime } from '../lib/time';
 import './Readout.css';
 
 interface Props {
@@ -34,10 +34,9 @@ export function Readout({ mw, peakMw, validTime, runTime }: Props) {
       </div>
 
       {/* Same shape as the block opposite: one figure carrying the weight,
-          with its smaller qualifiers stacked around it. The date goes above
-          rather than beside the clock so the hour reads as the headline. */}
+          with its smaller qualifiers stacked under it. The day is named up in
+          the deck head, level with the title, so only the hour stands here. */}
       <div className="readout__block readout__block--when">
-        <div className="readout__date muted tabular">{formatPacificDate(validTime)}</div>
         <div className="readout__when tabular">{formatPacificTime(validTime)}</div>
         <div className="readout__caption muted tabular">
           Pacific · {formatLead(runTime, validTime)} ahead

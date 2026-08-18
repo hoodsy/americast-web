@@ -65,6 +65,15 @@ export const DIM_EDGE: Record<Mode, string> = { light: '#e0dfd7', dark: '#2c2c2a
 export const LAND: Record<Mode, string> = { light: '#fdfdfb', dark: '#262624' };
 export const LAND_EDGE: Record<Mode, string> = { light: '#b6b3a8', dark: '#4d4c48' };
 
+/**
+ * County hairlines, and their own value rather than the page's GRID — the two
+ * sit on different grounds. GRID is tuned for borders on the surfaces the
+ * cards are made of; over dark land it lands within a few levels of the fill
+ * and the counties vanish. Kept well under LAND_EDGE either way, because the
+ * state's own outline should still read as the louder line.
+ */
+export const COUNTY_EDGE: Record<Mode, string> = { light: '#e1e0d9', dark: '#403f3b' };
+
 /** A plant with no meaningful sun: an empty outline, never a ramp colour. */
 export const UNLIT: Record<Mode, string> = { light: '#b9b7b0', dark: '#55534e' };
 

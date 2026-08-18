@@ -120,17 +120,40 @@
 
 .deck__head {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 12px 16px;
   flex-wrap: wrap;
   padding: 10px 18px 0;
 }
 
-.deck__stale {
+/* Title and its qualifiers travel together, so the date is what the row's
+   other end holds and the two sit on one baseline. */
+.deck__lede {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.deck__run {
   font-size: 11px;
-  font-weight: 600;
-  color: var(--curve);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* Dates the hour below it, from the title's own line. Set in caps like the
+   title it aligns to — two lowercase words against small caps read as a
+   misalignment even when the baselines agree. */
+.deck__date {
+  /* Holds the right edge even on a narrow deck, where the row wraps and
+     space-between has nothing left to push against. */
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .deck__title {

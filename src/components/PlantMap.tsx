@@ -19,9 +19,9 @@ import californiaCounties from '../assets/california-counties.json';
 import usStates from '../assets/us-states.json';
 import type { Plant, PlantSeries } from '../api/types';
 import {
+  COUNTY_EDGE,
   DIM_EDGE,
   DIM_LAND,
-  GRID,
   LAND,
   LAND_EDGE,
   MUTED,
@@ -215,9 +215,9 @@ export function PlantMap({ plants, series, validTimes, pos, cursor, mode }: Prop
    *  they are orientation, not data. */
   const countyLine = useMemo<LineLayerSpecification['paint']>(
     () => ({
-      'line-color': GRID[mode],
+      'line-color': COUNTY_EDGE[mode],
       'line-width': ['interpolate', ['linear'], ['zoom'], 5, 0.5, 9, 1],
-      'line-opacity': mode === 'light' ? 0.9 : 0.7,
+      'line-opacity': 0.9,
     }),
     [mode],
   );
@@ -407,10 +407,10 @@ function buildTooltip(
     name: plant.name,
     // Capacity moved into the output line, where it is the denominator.
     meta: `${plant.county} County`,
-    value:
-      clearness === null
-        ? 'Not generating — no meaningful sun'
-        : `${mw.toFixed(1)} MW / ${cap.toFixed(1)} MW capacity`,
+    // A dark plant reads as 0.0 against its nameplate rather than as a
+    // sentence, so the hover answers the same question at every hour and the
+    // reader can compare an idle plant to a working one without re-reading.
+    value: `${mw.toFixed(1)} MW / ${cap.toFixed(1)} MW capacity`,
     // Not a second way of saying the line above. That one is output against
     // nameplate, which folds in the time of day; this is output against what
     // a cloudless sky would give *at this hour*, which is weather alone — a

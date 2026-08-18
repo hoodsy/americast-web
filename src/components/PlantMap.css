@@ -51,7 +51,8 @@
   white-space: nowrap;
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--muted);
   /* Haloed in the land colour, not the page surface — these labels sit on
      California, and over graph paper a surface-coloured halo would show. */
@@ -81,16 +82,24 @@
   line-height: 1.4;
 }
 
+/* The hover reads in the same voice as the deck: caps throughout, tracked
+   open enough to stay legible at these sizes. */
 .map__tooltip-name {
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .map__tooltip-meta {
   font-size: 11.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 .map__tooltip-value {
   margin-top: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* --- legend --- */
@@ -109,7 +118,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 186px;
+  width: 202px;
   max-height: calc(100% - 300px);
   overflow-y: auto;
   padding: 13px 14px;
@@ -130,7 +139,7 @@
 .legend__label {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 5px;
@@ -146,7 +155,12 @@
 .legend__ends {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  /* Caps run wider than the lowercase these were set in, and a wrapped end
+     label stops reading as one end of a scale — so they hold one line. */
+  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   margin-top: 3px;
 }
 
@@ -174,10 +188,13 @@
 
 .legend__size-label {
   font-size: 10.5px;
+  letter-spacing: 0.07em;
 }
 
 .legend__size-unit {
   font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
   align-self: flex-end;
   padding-bottom: 1px;
 }
@@ -187,7 +204,7 @@
 @media (max-width: 620px) {
   .legend {
     top: 66px;
-    width: 150px;
+    width: 178px;
     gap: 10px;
     padding: 10px 11px;
     max-height: calc(100% - 280px);
